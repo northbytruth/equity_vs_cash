@@ -1,0 +1,230 @@
+<!-- equity vs cash
+startup / company equity
+private or public
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Equity or Cash?</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script type="text/javascript">
+        function updateForm() {
+            // default example on load
+
+            // Calculate liquidity date.
+            var sale_date = new Date();
+            const vest_datev = new Date(document.getElementById("vest_date").value);
+            sale_date.setFullYear(sale_date.getFullYear() + 2);
+            liquid_date = vest_datev;
+            if (vest_datev < sale_date) {
+                liquid_date = sale_date;
+            }
+            const liquid_month = liquid_date.toLocaleString('default', { month: 'long' });
+            const disp_date = liquid_month + ' ' + liquid_date.getFullYear();
+
+            const start_date = new Date(document.getElementById("start_date").value);
+            const years_invested = Math.max(liquid_date.getFullYear() - start_date.getFullYear(), 1);
+
+            const grant_value = parseInt(document.getElementById("grant_amount").value);
+
+            //given 2x company valuation
+            const double_grant_value_bonus = Math.round(2 * grant_value / years_invested)
+            //given 1x company valuation and no investor clawback
+            const full_grant_value_bonus = Math.round(grant_value / years_invested)
+            //given 1x company valuation and investor clawback
+            const half_grant_value_bonus = Math.round((grant_value / 2) / years_invested)
+
+            //below this difficult due to clawback of primary investors from sale
+
+            // Set on form
+            document.getElementById("DATEOFPAYOUT").textContent = disp_date;
+            document.getElementById("DOUBLEPAYOUT").textContent = 2 * grant_value;
+            document.getElementById("DOUBLEPAYOUTBONUS").textContent = double_grant_value_bonus;
+
+            document.getElementById("SINGLEPAYOUTWITHCLAWBACK").textContent = (grant_value / 2)
+            document.getElementById("SINGLEPAYOUTBONUSWITHCLAWBACK").textContent = half_grant_value_bonus
+            document.getElementById("SINGLEPAYOUT").textContent = grant_value
+            document.getElementById("SINGLEPAYOUTBONUS").textContent = full_grant_value_bonus
+        }
+    </script>
+</head>
+
+<body onload="updateForm();">
+    <div class="container text-left">
+        <br />
+        <div class="row">
+            <h1>Equity or Cash?</h1>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col">
+                <p>When trying to decide between cash or equity paying jobs, consider the amounts involved in an
+                    objective sense. You'll need details on how many RSUs, the grant value and a valuation of the
+                    company. These can be approximations and should still give a pretty good idea on pay off.
+                    This form is not currency dependent.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <p>
+                This calculator is only useful for companies that are not public. For public companies take the
+                cash equivalent (USD/GBP value) of the sale/exercise of stock/options upon vesting.
+            </p>
+            <br />
+        </div>
+
+        <div id="reserve_form">
+            <br />
+            <br />
+
+            <div class="row">
+                <div class="col">
+                    <p class="fs-5"><label class="form">Start Date</label></p>
+                </div>
+                <div class="col">
+                    <input type="date" class="textbox" id="start_date" name="start_date" onchange="updateForm()">
+                </div>
+                <div class="col">
+                    <p class="fs-7">(from when you invested your time)</p>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col">
+                    <p class="fs-5"><label class="form">Vest Date</label></p>
+                </div>
+                <div class="col">
+                    <input type="date" class="textbox" id="vest_date" name="vesting_date" onchange="updateForm()">
+                </div>
+                <div class="col">
+                    <p class="fs-7">(when your grant fully vests)</p>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col">
+                    <p class="fs-5"><label class="form">Grant Amount</label></p>
+                </div>
+                <div class="col">
+                    <input type="text" class="textbox" id="grant_amount" name="grant_amount" onchange="updateForm()"
+                        value="100000">
+                </div>
+                <div class="col">
+                    <p class="fs-7">(the grant amount in USD/GBP)</p>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col">
+                    <p class="fs-5"><label class="form">Company Valuation at Grant</label></p>
+                </div>
+                <div class="col">
+                    <input type="text" class="textbox" id="company_value_at_grant" name="company_value_at_grant"
+                        onchange="updateForm()" value="200000000">
+                </div>
+                <div class="col">
+                    <p class="fs-7">(the company valuation in USD/GBP, exact or approximate)</p>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col">
+                    <p class="fs-5"><label class="form">RSU/Option Amount</label></p>
+                </div>
+                <div class="col">
+                    <input type="text" class="textbox" id="rsu_count" name="rsu_count" onchange="updateForm()"
+                        value="100">
+                </div>
+                <div class="col">
+                    <p class="fs-7">(the number of RSUs that are granted either directly or after exercise)</p>
+                </div>
+            </div>
+
+
+            <br />
+            <br />
+
+            <div class="row">
+                <div class="col">
+                    <p class="fs-3">What is the pay off?</p>
+                    <p class="fs-6">Given a period of 2 years from an agreement of sale or start of IPO preparation
+                        until the vested equity can be sold or converted to cash. On a successful IPO or
+                        sale, the earliest date you would be able to sell all your equity is
+                        <label class="fs-6" id="DATEOFPAYOUT"></label>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <p>2x Valuation at sale or IPO</p>
+                </div>
+                <div class="col">
+                    <p>Gross Payout </p>
+                    <p>Gross Equivalent Annual Bonus </p>
+                </div>
+                <div class="col">
+                    <p>$<label class="fs-6" id="DOUBLEPAYOUT"></label></p>
+                    <p>$<label class="fs-6" id="DOUBLEPAYOUTBONUS"></label></p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <p>1x Valuation at sale or IPO (late stage grant)</p>
+                </div>
+                <div class="col">
+                    <p>Gross Payout </p>
+                    <p>Gross Equivalent Annual Bonus </p>
+                </div>
+                <div class="col">
+                    <p>$<label class="fs-6" id="SINGLEPAYOUT"></label></p>
+                    <p>$<label class="fs-6" id="SINGLEPAYOUTBONUS"></label></p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <p>1x Valuation at sale with investor clawback (early/mid stage grants)</p>
+                </div>
+                <div class="col">
+                    <p>Gross Payout </p>
+                    <p>Gross Equivalent Annual Bonus </p>
+                </div>
+                <div class="col">
+                    <p>$<label class="fs-6" id="SINGLEPAYOUTWITHCLAWBACK"></label></p>
+                    <p>$<label class="fs-6" id="SINGLEPAYOUTBONUSWITHCLAWBACK"></label></p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <p class="fs-6">
+                        Below a 1x company valuation; the sale would first have clawback from primary investors, this is
+                        before
+                        calculating employee equity.
+                        It would be anything from 0 - 1x your grant value and most likely 0.
+                    </p>
+                </div>
+            </div>
+
+            <br />
+            <p class="fst-italic">Please note this does not constitute financial advice and you should seek a qualifed
+                professional when making decisions. This serves only as an indicator from the limited
+                information given here.</p>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+</body>
+
+</html>
